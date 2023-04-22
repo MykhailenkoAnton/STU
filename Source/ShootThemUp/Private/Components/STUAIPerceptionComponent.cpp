@@ -23,7 +23,11 @@ AActor* USTUAIPerceptionComponent::GetClosestEnemy() const
     for (const auto PercieveActor : PercieveActors)
     {
         const auto HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(PercieveActor);
-        if (HealthComponent && !HealthComponent->IsDead())  // TODO: check if enemies or not
+
+        const auto PervievePawn = Cast<APawn>(PercieveActor);
+        const auto AreEmenies = PervievePawn && STUUtils::AreEnemies(Controller, PervievePawn->Controller);
+
+        if (HealthComponent && !HealthComponent->IsDead() && AreEmenies)
         {
             const auto CurrentDistance = (PercieveActor->GetActorLocation() - Pawn->GetActorLocation()).Size();
             if (CurrentDistance < BestDistance)
