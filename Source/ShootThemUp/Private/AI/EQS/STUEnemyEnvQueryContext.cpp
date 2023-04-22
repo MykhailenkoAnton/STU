@@ -15,6 +15,6 @@ void USTUEnemyEnvQueryContext::ProvideContext(FEnvQueryInstance& QueryInstance, 
     if (!Blackboard) return;
 
     const auto ContextActor = Blackboard->GetValueAsObject(EnemyActorKeyName);
-
+        
     UEnvQueryItemType_Actor::SetContextHelper(ContextData, Cast<AActor>(ContextActor));
 }
