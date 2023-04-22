@@ -29,9 +29,8 @@ void ASTUAIController::Tick(float DeltaTime)
     SetFocus(AimActor);
 }
 
-AActor* ASTUAIController::GetFocusOnActor()
+AActor* ASTUAIController::GetFocusOnActor() const
 {
     if (!GetBlackboardComponent()) return nullptr;
-
     return Cast<AActor>(GetBlackboardComponent()->GetValueAsObject(FocusOnKeyName));
 }

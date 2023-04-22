@@ -26,6 +26,7 @@ public:
     bool GetCurrentWeaponAmmoData(FAmmoData& AmmoData) const;
 
     bool TryToAddAmmo(TSubclassOf<ASTUBaseWeapon> WeaponType, int32 ClipsAmount);
+    bool NeedAmmo(TSubclassOf<ASTUBaseWeapon> WeaponType);
 
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Weapon")
@@ -53,13 +54,12 @@ protected:
 
     bool CanFire() const;
     bool CanEquip() const;
-
     void EquipWeapon(int32 WeaponIndex);
 
 private:
-
     UPROPERTY()
     UAnimMontage* CurrentReloadAnimMontage = nullptr;
+
     bool EquipAnimInProgress = false;
     bool ReloadAnimInProgress = false;
 
@@ -72,7 +72,6 @@ private:
     void OnEquipFinished(USkeletalMeshComponent* MeshComp);
     void OnReloadFinished(USkeletalMeshComponent* MeshComp);
 
-    
     bool CanReload() const;
 
     void OnClipEmpty(ASTUBaseWeapon* AmmoEmptyWeapon);

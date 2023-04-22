@@ -1,21 +1,18 @@
 // Shoot Them Up Game, All Rights Reserved.
 
-
 #include "AI/Services/STUChangeWeaponService.h"
 #include "Components/STUWeaponComponent.h"
 #include "AIController.h"
 #include "STUUtils.h"
 
-
-USTUChangeWeaponService::USTUChangeWeaponService() 
+USTUChangeWeaponService::USTUChangeWeaponService()
 {
-    NodeName = "ChangeWeapon";
+    NodeName = "Change Weapon";
 }
 
-void USTUChangeWeaponService::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) 
+void USTUChangeWeaponService::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
     const auto Controller = OwnerComp.GetAIOwner();
-
     if (Controller)
     {
         const auto WeaponComponent = STUUtils::GetSTUPlayerComponent<USTUWeaponComponent>(Controller->GetPawn());
