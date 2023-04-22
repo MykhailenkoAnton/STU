@@ -16,6 +16,8 @@ class SHOOTTHEMUP_API ASTUBasePickup : public AActor
 public:
     ASTUBasePickup();
 
+    bool CouldBeTaken() const;
+
 protected:
     UPROPERTY(VisibleAnywhere, Category = "Pickup")
     USphereComponent* CollisionComponent;
@@ -31,6 +33,8 @@ public:
 
 private:
     float RotationYaw = 0.0f;
+
+    FTimerHandle RespawnTimerHandle;
 
     virtual bool GivePickupTo(APawn* PlayerPawn);
 
