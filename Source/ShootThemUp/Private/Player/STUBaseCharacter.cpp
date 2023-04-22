@@ -119,6 +119,14 @@ float ASTUBaseCharacter::GetMovementDirection() const
     return CrossProduct.IsZero() ? Degrees : Degrees * FMath::Sign(CrossProduct.Z);
 }
 
+void ASTUBaseCharacter::SetPlayerColor(const FLinearColor& Color)
+{
+    const auto MaterialInstance = GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
+    if (!MaterialInstance) return;
+
+    MaterialInstance->SetVectorParameterValue(MaterialColorName, Color);
+}
+
 void ASTUBaseCharacter::OnDeath()
 {
     UE_LOG(LogBaseCharacter, Display, TEXT("Player %s is dead"), *GetName());
