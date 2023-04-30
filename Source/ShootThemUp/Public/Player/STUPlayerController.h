@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "STUCoreTypes.h"
 #include "STUPlayerController.generated.h"
 
 class USTUPespawnComponent;
@@ -22,5 +23,15 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     USTUPespawnComponent* RespawnComponent;
 
-    virtual void OnPossess(APawn* InPawn    ) override;
+    virtual void OnPossess(APawn* InPawn) override;
+
+    virtual void SetupInputComponent() override;
+
+    virtual void BeginPlay() override;
+
+private:
+
+    void OnPauseGame();
+    
+    void OnMatchStateChanged(ESTUMatchState State);
 };
