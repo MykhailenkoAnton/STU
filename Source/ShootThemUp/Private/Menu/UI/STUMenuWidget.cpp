@@ -31,6 +31,5 @@ void USTUMenuWidget::OnStartGame()
         return;
     }
 
-    const FName StartupLevelName = "TestLevel";
-    UGameplayStatics::OpenLevel(this, StartupLevelName);
+    UGameplayStatics::OpenLevel(this, STUGameInstance->GetStartupLevelName());
 }
