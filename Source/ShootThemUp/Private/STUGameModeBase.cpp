@@ -9,7 +9,7 @@
 #include "STUUtils.h"
 #include "Components/STUPespawnComponent.h"
 #include "EngineUtils.h"
-#include "STUGameInstance.h" // for test
+//#include "STUGameInstance.h" // for test
 
 constexpr static int32 MinRoundTimeForRespawn = 10;
 
@@ -27,7 +27,7 @@ void ASTUGameModeBase::StartPlay()
 {
     Super::StartPlay();
 
-    UE_LOG(LogSTUGameModeBase, Display, TEXT("%s"), *GetWorld()->GetGameInstance<USTUGameInstance>()->TestString); // for test
+    //UE_LOG(LogSTUGameModeBase, Display, TEXT("%s"), *GetWorld()->GetGameInstance<USTUGameInstance>()->TestString); // for test
 
     SpawnBots();
     CreateTeamsInfo();
