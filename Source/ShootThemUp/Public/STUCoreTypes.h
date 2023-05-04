@@ -118,3 +118,21 @@ enum class ESTUMatchState: uint8
 };
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnMatchStateChangeSignature, ESTUMatchState);
+
+USTRUCT(BlueprintType)
+struct FLevelData
+{
+    GENERATED_USTRUCT_BODY()
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game")
+    FName LevelName = NAME_None;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game")
+    FName LevelDispayName = NAME_None;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game")
+    UTexture2D* LevelThumb;
+
+};
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnLevelSelectedSignature, const FLevelData &);
