@@ -24,7 +24,7 @@ public:
 	TArray<FLevelData> GetLevelsData() { return LevelsData; }
 
 protected:
-
+		
 	UPROPERTY(EditDefaultsOnly, Category = "Game", meta = (ToolTip = "Level names must be unique!"))
     TArray<FLevelData> LevelsData;
 
