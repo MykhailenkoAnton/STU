@@ -1,27 +1,43 @@
 // Shoot Them Up Game, All Rights Reserved.
 
 #include "Player/STUPlayerController.h"
-#include "Components/STUPespawnComponent.h"
+#include "Components/STURespawnComponent.h"
 #include "STUGameModeBase.h"
 
-ASTUPlayerController::ASTUPlayerController() 
+ASTUPlayerController::ASTUPlayerController()
 {
-    RespawnComponent = CreateDefaultSubobject<USTUPespawnComponent>("STUPespawnComponent");
+    RespawnComponent = CreateDefaultSubobject<USTURespawnComponent>("RespawnComponent");
 }
 
-void ASTUPlayerController::BeginPlay() 
+void ASTUPlayerController::BeginPlay()
 {
+    Super::BeginPlay();
+
     if (GetWorld())
     {
         const auto GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
         if (GameMode)
         {
-            GameMode->OnMatchStateChange.AddUObject(this, &ASTUPlayerController::OnMatchStateChanged);
+            GameMode->OnMatchStateChanged.AddUObject(this, &ASTUPlayerController::OnMatchStateChanged);
         }
     }
 }
 
-void ASTUPlayerController::OnPossess(APawn* InPawn) 
+void ASTUPlayerController::OnMatchStateChanged(ESTUMatchState State)
+{
+    if (State == ESTUMatchState::InProgress)
+    {
+        SetInputMode(FInputModeGameOnly());
+        bShowMouseCursor = false;
+    }
+    else
+    {
+        SetInputMode(FInputModeUIOnly());
+        bShowMouseCursor = true;
+    }
+}
+
+void ASTUPlayerController::OnPossess(APawn* InPawn)
 {
     Super::OnPossess(InPawn);
 
@@ -41,18 +57,4 @@ void ASTUPlayerController::OnPauseGame()
     if (!GetWorld() || !GetWorld()->GetAuthGameMode()) return;
 
     GetWorld()->GetAuthGameMode()->SetPause(this);
-}
-
-void ASTUPlayerController::OnMatchStateChanged(ESTUMatchState State) 
-{
-    if (State == ESTUMatchState::InProgress)
-    {
-        SetInputMode(FInputModeGameOnly());
-        bShowMouseCursor = false;
-    }
-    else
-    {
-        SetInputMode(FInputModeUIOnly());
-        bShowMouseCursor = true;
-    }
 }

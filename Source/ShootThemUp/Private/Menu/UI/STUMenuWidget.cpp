@@ -1,17 +1,16 @@
 // Shoot Them Up Game, All Rights Reserved.
 
-
 #include "Menu/UI/STUMenuWidget.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 #include "STUGameInstance.h"
-#include "Components/HorizontalBox.h"
-#include "Menu/UI/STULeveltemWidget.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Components/HorizontalBox.h"
+#include "Menu/UI/STULevelItemWidget.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSTUMenuWidget, All, All);
 
-void USTUMenuWidget::NativeOnInitialized() 
+void USTUMenuWidget::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
 
@@ -28,19 +27,6 @@ void USTUMenuWidget::NativeOnInitialized()
     InitLevelItems();
 }
 
-void USTUMenuWidget::OnStartGame() 
-{
-    const auto STUGameInstance = GetSTUGameInstance();
-    if (!STUGameInstance) return;
-
-    UGameplayStatics::OpenLevel(this, STUGameInstance->GetStartupLevel().LevelName);
-}
-
-void USTUMenuWidget::OnQuitGame()
-{
-    UKismetSystemLibrary::QuitGame(this, GetOwningPlayer(), EQuitPreference::Quit, true);
-}
-
 void USTUMenuWidget::InitLevelItems()
 {
     const auto STUGameInstance = GetSTUGameInstance();
@@ -48,23 +34,22 @@ void USTUMenuWidget::InitLevelItems()
 
     checkf(STUGameInstance->GetLevelsData().Num() != 0, TEXT("Levels data must not be empty!"));
 
-    if (!LevelItemBox) return;
-
-    LevelItemBox->ClearChildren();
+    if (!LevelItemsBox) return;
+    LevelItemsBox->ClearChildren();
 
     for (auto LevelData : STUGameInstance->GetLevelsData())
     {
-        const auto LevelItemWidget = CreateWidget<USTULeveltemWidget>(GetWorld(), LevelItemWidgetClass);
+        const auto LevelItemWidget = CreateWidget<USTULevelItemWidget>(GetWorld(), LevelItemWidgetClass);
         if (!LevelItemWidget) continue;
 
         LevelItemWidget->SetLevelData(LevelData);
         LevelItemWidget->OnLevelSelected.AddUObject(this, &USTUMenuWidget::OnLevelSelected);
 
-        LevelItemBox->AddChild(LevelItemWidget);
+        LevelItemsBox->AddChild(LevelItemWidget);
         LevelItemWidgets.Add(LevelItemWidget);
     }
 
-    if (STUGameInstance->GetStartupLevel().LevelName == NAME_None)
+    if (STUGameInstance->GetStartupLevel().LevelName.IsNone())
     {
         OnLevelSelected(STUGameInstance->GetLevelsData()[0]);
     }
@@ -74,7 +59,7 @@ void USTUMenuWidget::InitLevelItems()
     }
 }
 
-void USTUMenuWidget::OnLevelSelected(const FLevelData& Data) 
+void USTUMenuWidget::OnLevelSelected(const FLevelData& Data)
 {
     const auto STUGameInstance = GetSTUGameInstance();
     if (!STUGameInstance) return;
@@ -91,9 +76,21 @@ void USTUMenuWidget::OnLevelSelected(const FLevelData& Data)
     }
 }
 
+void USTUMenuWidget::OnStartGame()
+{
+    const auto STUGameInstance = GetSTUGameInstance();
+    if (!STUGameInstance) return;
+
+    UGameplayStatics::OpenLevel(this, STUGameInstance->GetStartupLevel().LevelName);
+}
+
+void USTUMenuWidget::OnQuitGame()
+{
+    UKismetSystemLibrary::QuitGame(this, GetOwningPlayer(), EQuitPreference::Quit, true);
+}
+
 USTUGameInstance* USTUMenuWidget::GetSTUGameInstance() const
 {
     if (!GetWorld()) return nullptr;
-
     return GetWorld()->GetGameInstance<USTUGameInstance>();
 }

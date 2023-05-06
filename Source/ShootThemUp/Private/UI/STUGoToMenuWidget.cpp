@@ -1,6 +1,5 @@
 // Shoot Them Up Game, All Rights Reserved.
 
-
 #include "UI/STUGoToMenuWidget.h"
 #include "Components/Button.h"
 #include "STUGameInstance.h"
@@ -8,7 +7,7 @@
 
 DEFINE_LOG_CATEGORY_STATIC(LogSTUGoToMenuWidget, All, All);
 
-void USTUGoToMenuWidget::NativeOnInitialized() 
+void USTUGoToMenuWidget::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
 
@@ -27,7 +26,7 @@ void USTUGoToMenuWidget::OnGoToMenu()
 
     if (STUGameInstance->GetMenuLevelName().IsNone())
     {
-        UE_LOG(LogSTUGoToMenuWidget, Error, TEXT("Menu Level name is NONE"));
+        UE_LOG(LogSTUGoToMenuWidget, Error, TEXT("Menu level name is NONE"));
         return;
     }
 

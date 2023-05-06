@@ -6,16 +6,12 @@
 #include "EnvironmentQuery/EnvQueryTest.h"
 #include "EnvQueryTest_PickupCouldBeTaken.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class SHOOTTHEMUP_API UEnvQueryTest_PickupCouldBeTaken : public UEnvQueryTest
 {
-	GENERATED_BODY()
-	
-public:
-    UEnvQueryTest_PickupCouldBeTaken(const FObjectInitializer & ObjInitializer);
+    GENERATED_BODY()
 
-	virtual void RunTest(FEnvQueryInstance& QueryInstance) const override;
+public:
+    UEnvQueryTest_PickupCouldBeTaken(const FObjectInitializer& ObjectInitializer);
+    virtual void RunTest(FEnvQueryInstance& QueryInstance) const override;
 };

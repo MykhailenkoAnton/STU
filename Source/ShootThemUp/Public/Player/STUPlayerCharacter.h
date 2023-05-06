@@ -13,15 +13,13 @@ class USphereComponent;
 UCLASS()
 class SHOOTTHEMUP_API ASTUPlayerCharacter : public ASTUBaseCharacter
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-
     ASTUPlayerCharacter(const FObjectInitializer& ObjInit);
 
 protected:
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     USpringArmComponent* SpringArmComponent;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
@@ -31,16 +29,13 @@ protected:
     USphereComponent* CameraCollisionComponent;
 
     virtual void OnDeath() override;
-
     virtual void BeginPlay() override;
 
 public:
-
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
     virtual bool IsRunning() const override;
 
 private:
-
     bool WantsToRun = false;
     bool IsMovingForward = false;
 

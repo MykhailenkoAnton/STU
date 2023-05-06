@@ -6,15 +6,11 @@
 #include "GameFramework/PlayerController.h"
 #include "STUMenuPlayerController.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class SHOOTTHEMUP_API ASTUMenuPlayerController : public APlayerController
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 protected:
-
-	virtual void BeginPlay() override;
+    virtual void BeginPlay() override;
 };

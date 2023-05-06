@@ -34,14 +34,6 @@ void ASTUBaseWeapon::StopFire() {}
 
 void ASTUBaseWeapon::MakeShot() {}
 
-//APlayerController* ASTUBaseWeapon::GetPlayerController() const
-//{
-//    const auto Player = Cast<ACharacter>(GetOwner());
-//    if (!Player) return nullptr;
-//
-//    return Player->GetController<APlayerController>();
-//}
-
 bool ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const
 {
     const auto STUCharacter = Cast<ACharacter>(GetOwner());
@@ -129,7 +121,7 @@ void ASTUBaseWeapon::ChangeClip()
         CurrentAmmo.Clips--;
     }
     CurrentAmmo.Bullets = DefaultAmmo.Bullets;
-    //UE_LOG(LogBaseWeapon, Display, TEXT("------ Change Clip ------"));
+    // UE_LOG(LogBaseWeapon, Display, TEXT("------ Change Clip ------"));
 }
 
 bool ASTUBaseWeapon::CanReload() const

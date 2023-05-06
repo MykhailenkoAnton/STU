@@ -1,25 +1,22 @@
 // Shoot Them Up Game, All Rights Reserved.
 
-
-#include "Components/STUPespawnComponent.h"
+#include "Components/STURespawnComponent.h"
 #include "STUGameModeBase.h"
 
-// Sets default values for this component's properties
-USTUPespawnComponent::USTUPespawnComponent()
+USTURespawnComponent::USTURespawnComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false;
-
+    PrimaryComponentTick.bCanEverTick = false;
 }
 
-void USTUPespawnComponent::Respawn(int32 RespawnTime) 
+void USTURespawnComponent::Respawn(int32 RespawnTime)
 {
     if (!GetWorld()) return;
 
-	RespawnCountDown = RespawnTime;
-    GetWorld()->GetTimerManager().SetTimer(RespawnTimerHandle, this, &USTUPespawnComponent::RespawnTimerUpdate, 1.0f, true);
+    RespawnCountDown = RespawnTime;
+    GetWorld()->GetTimerManager().SetTimer(RespawnTimerHandle, this, &USTURespawnComponent::RespawnTimerUpdate, 1.0f, true);
 }
 
-void USTUPespawnComponent::RespawnTimerUpdate() 
+void USTURespawnComponent::RespawnTimerUpdate()
 {
     if (--RespawnCountDown == 0)
     {
@@ -31,10 +28,9 @@ void USTUPespawnComponent::RespawnTimerUpdate()
 
         GameMode->RespawnRequest(Cast<AController>(GetOwner()));
     }
-
 }
 
-bool USTUPespawnComponent::IsRespawnInProgress() const 
+bool USTURespawnComponent::IsRespawnInProgress() const
 {
     return GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(RespawnTimerHandle);
 }

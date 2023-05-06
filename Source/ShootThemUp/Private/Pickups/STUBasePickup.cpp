@@ -32,11 +32,6 @@ void ASTUBasePickup::Tick(float DeltaTime)
     AddActorLocalRotation(FRotator(0.0f, RotationYaw, 0.0f));
 }
 
-bool ASTUBasePickup::CouldBeTaken() const 
-{
-    return !GetWorldTimerManager().IsTimerActive(RespawnTimerHandle);
-}
-
 void ASTUBasePickup::NotifyActorBeginOverlap(AActor* OtherActor)
 {
     Super::NotifyActorBeginOverlap(OtherActor);
@@ -78,4 +73,9 @@ void ASTUBasePickup::GenerateRotationYaw()
 {
     const auto Direction = FMath::RandBool() ? 1.0f : -1.0f;
     RotationYaw = FMath::RandRange(1.0f, 2.0f) * Direction;
+}
+
+bool ASTUBasePickup::CouldBeTaken() const
+{
+    return !GetWorldTimerManager().IsTimerActive(RespawnTimerHandle);
 }

@@ -3,7 +3,6 @@
 #include "Player/STUBaseCharacter.h"
 #include "Components/STUCharacterMovementComponent.h"
 #include "Components/STUHealthComponent.h"
-#include "Components/TextRenderComponent.h"
 #include "Components/STUWeaponComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Controller.h"
@@ -35,10 +34,7 @@ void ASTUBaseCharacter::BeginPlay()
     LandedDelegate.AddDynamic(this, &ASTUBaseCharacter::OnGroundLanded);
 }
 
-void ASTUBaseCharacter::OnHealthChanged(float Health, float HealthDelta)
-{
-    
-}
+void ASTUBaseCharacter::OnHealthChanged(float Health, float HealthDelta) {}
 
 void ASTUBaseCharacter::Tick(float DeltaTime)
 {
@@ -58,14 +54,6 @@ float ASTUBaseCharacter::GetMovementDirection() const
     const auto CrossProduct = FVector::CrossProduct(GetActorForwardVector(), VelocityNormal);
     const auto Degrees = FMath::RadiansToDegrees(AngleBetween);
     return CrossProduct.IsZero() ? Degrees : Degrees * FMath::Sign(CrossProduct.Z);
-}
-
-void ASTUBaseCharacter::SetPlayerColor(const FLinearColor& Color)
-{
-    const auto MaterialInstance = GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
-    if (!MaterialInstance) return;
-
-    MaterialInstance->SetVectorParameterValue(MaterialColorName, Color);
 }
 
 void ASTUBaseCharacter::OnDeath()
@@ -92,4 +80,12 @@ void ASTUBaseCharacter::OnGroundLanded(const FHitResult& Hit)
     TakeDamage(FallDamage, FDamageEvent{}, nullptr, nullptr);
 
     UE_LOG(LogBaseCharacter, Display, TEXT("Player %s recived landed damage: %f"), *GetName(), FallDamage);
+}
+
+void ASTUBaseCharacter::SetPlayerColor(const FLinearColor& Color)
+{
+    const auto MaterialInst = GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
+    if (!MaterialInst) return;
+
+    MaterialInst->SetVectorParameterValue(MaterialColorName, Color);
 }

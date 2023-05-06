@@ -28,12 +28,12 @@ protected:
     virtual void BeginPlay() override;
 
 private:
-    void DrawCrossHair();
-    void OnMatchStateChanged(ESTUMatchState State);
-
     UPROPERTY()
     TMap<ESTUMatchState, UUserWidget*> GameWidgets;
-    
+
     UPROPERTY()
     UUserWidget* CurrentWidget = nullptr;
+
+    void DrawCrossHair();
+    void OnMatchStateChanged(ESTUMatchState State);
 };

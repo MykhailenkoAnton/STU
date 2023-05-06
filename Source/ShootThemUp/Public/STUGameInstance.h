@@ -7,33 +7,26 @@
 #include "STUCoreTypes.h"
 #include "STUGameInstance.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class SHOOTTHEMUP_API USTUGameInstance : public UGameInstance
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
+    FLevelData GetStartupLevel() const { return StartupLevel; }
+    void SetStartupLevel(const FLevelData& Data) { StartupLevel = Data; }
 
-	FLevelData GetStartupLevel() const { return StartupLevel; }
-    void SetStartupLevel(const FLevelData& LevelData) { StartupLevel = LevelData; }
-	FName GetMenuLevelName() const { return MenuLevelName; }
+    TArray<FLevelData> GetLevelsData() const { return LevelsData; }
 
-	TArray<FLevelData> GetLevelsData() { return LevelsData; }
+    FName GetMenuLevelName() const { return MenuLevelName; }
 
 protected:
-		
-	UPROPERTY(EditDefaultsOnly, Category = "Game", meta = (ToolTip = "Level names must be unique!"))
+    UPROPERTY(EditDefaultsOnly, Category = "Game", meta = (ToolTip = "Level names must be unique!"))
     TArray<FLevelData> LevelsData;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Game")
+    UPROPERTY(EditDefaultsOnly, Category = "Game")
     FName MenuLevelName = NAME_None;
-	
+
 private:
-
     FLevelData StartupLevel;
-
-	//FString TestString = "Hello game";
 };

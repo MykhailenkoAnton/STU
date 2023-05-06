@@ -7,13 +7,12 @@
 #include "AIController.h"
 #include "Player/STUPlayerState.h"
 #include "STUUtils.h"
-#include "Components/STUPespawnComponent.h"
+#include "Components/STURespawnComponent.h"
 #include "EngineUtils.h"
-//#include "STUGameInstance.h" // for test
-
-constexpr static int32 MinRoundTimeForRespawn = 10;
 
 DEFINE_LOG_CATEGORY_STATIC(LogSTUGameModeBase, All, All);
+
+constexpr static int32 MinRoundTimeForRespawn = 10;
 
 ASTUGameModeBase::ASTUGameModeBase()
 {
@@ -23,11 +22,9 @@ ASTUGameModeBase::ASTUGameModeBase()
     PlayerStateClass = ASTUPlayerState::StaticClass();
 }
 
-void ASTUGameModeBase::StartPlay() 
+void ASTUGameModeBase::StartPlay()
 {
     Super::StartPlay();
-
-    //UE_LOG(LogSTUGameModeBase, Display, TEXT("%s"), *GetWorld()->GetGameInstance<USTUGameInstance>()->TestString); // for test
 
     SpawnBots();
     CreateTeamsInfo();
@@ -38,11 +35,20 @@ void ASTUGameModeBase::StartPlay()
     SetMatchState(ESTUMatchState::InProgress);
 }
 
+UClass* ASTUGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)
+{
+    if (InController && InController->IsA<AAIController>())
+    {
+        return AIPawnClass;
+    }
+    return Super::GetDefaultPawnClassForController_Implementation(InController);
+}
+
 void ASTUGameModeBase::SpawnBots()
 {
     if (!GetWorld()) return;
 
-    for (int32 i = 0; i < GameData.PlayersNum - 1; i++)
+    for (int32 i = 0; i < GameData.PlayersNum - 1; ++i)
     {
         FActorSpawnParameters SpawnInfo;
         SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -52,26 +58,17 @@ void ASTUGameModeBase::SpawnBots()
     }
 }
 
-UClass* ASTUGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController) 
+void ASTUGameModeBase::StartRound()
 {
-    if (InController && InController->IsA<AAIController>())
-    {
-        return AIPawnClass;
-    }
-
-    return Super::GetDefaultPawnClassForController_Implementation(InController);
-}
-
-void ASTUGameModeBase::StartRound() 
-{
-    RounsCountDown = GameData.RoundsTime;
+    RoundCountDown = GameData.RoundTime;
     GetWorldTimerManager().SetTimer(GameRoundTimerHandle, this, &ASTUGameModeBase::GameTimerUpdate, 1.0f, true);
 }
-void ASTUGameModeBase::GameTimerUpdate() 
-{
-    UE_LOG(LogSTUGameModeBase, Display, TEXT("Time: %i / Round: %i/%i"), RounsCountDown, CurrentRound, GameData.RoundsNum);
 
-    if (--RounsCountDown == 0)
+void ASTUGameModeBase::GameTimerUpdate()
+{
+    UE_LOG(LogSTUGameModeBase, Display, TEXT("Time: %i / Round: %i/%i"), RoundCountDown, CurrentRound, GameData.RoundsNum);
+
+    if (--RoundCountDown == 0)
     {
         GetWorldTimerManager().ClearTimer(GameRoundTimerHandle);
 
@@ -98,27 +95,25 @@ void ASTUGameModeBase::ResetPlayers()
     }
 }
 
-void ASTUGameModeBase::ResetOnePlayer(AController* Controller) 
+void ASTUGameModeBase::ResetOnePlayer(AController* Controller)
 {
     if (Controller && Controller->GetPawn())
     {
         Controller->GetPawn()->Reset();
     }
-
     RestartPlayer(Controller);
     SetPlayerColor(Controller);
 }
 
-void ASTUGameModeBase::CreateTeamsInfo() 
+void ASTUGameModeBase::CreateTeamsInfo()
 {
     if (!GetWorld()) return;
 
     int32 TeamID = 1;
-
     for (auto It = GetWorld()->GetControllerIterator(); It; ++It)
     {
         const auto Controller = It->Get();
-        if (!Controller) return;
+        if (!Controller) continue;
 
         const auto PlayerState = Cast<ASTUPlayerState>(Controller->PlayerState);
         if (!PlayerState) continue;
@@ -127,21 +122,23 @@ void ASTUGameModeBase::CreateTeamsInfo()
         PlayerState->SetTeamColor(DetermineColorByTeamID(TeamID));
         PlayerState->SetPlayerName(Controller->IsPlayerController() ? "Player" : "Bot");
         SetPlayerColor(Controller);
+
         TeamID = TeamID == 1 ? 2 : 1;
     }
 }
-FLinearColor ASTUGameModeBase::DetermineColorByTeamID(int32 TeamID) const 
+
+FLinearColor ASTUGameModeBase::DetermineColorByTeamID(int32 TeamID) const
 {
     if (TeamID - 1 < GameData.TeamColors.Num())
     {
         return GameData.TeamColors[TeamID - 1];
     }
     UE_LOG(
-        LogSTUGameModeBase, Warning, TEXT("No color fir team id: %i, set to default: %s"), TeamID, *GameData.DefaultsTeamColor.ToString());
-
-    return GameData.DefaultsTeamColor;
+        LogSTUGameModeBase, Warning, TEXT("No color for team id: %i, set to default: %s"), TeamID, *GameData.DefaultTeamColor.ToString());
+    return GameData.DefaultTeamColor;
 }
-void ASTUGameModeBase::SetPlayerColor(AController* Controller) 
+
+void ASTUGameModeBase::SetPlayerColor(AController* Controller)
 {
     if (!Controller) return;
 
@@ -154,7 +151,7 @@ void ASTUGameModeBase::SetPlayerColor(AController* Controller)
     Character->SetPlayerColor(PlayerState->GetTeamColor());
 }
 
-void ASTUGameModeBase::Killed(AController* KillerController, AController* VictimController) 
+void ASTUGameModeBase::Killed(AController* KillerController, AController* VictimController)
 {
     const auto KillerPlayerState = KillerController ? Cast<ASTUPlayerState>(KillerController->PlayerState) : nullptr;
     const auto VictimPlayerState = VictimController ? Cast<ASTUPlayerState>(VictimController->PlayerState) : nullptr;
@@ -172,14 +169,14 @@ void ASTUGameModeBase::Killed(AController* KillerController, AController* Victim
     StartRespawn(VictimController);
 }
 
-void ASTUGameModeBase::LogPlayerInfo() 
+void ASTUGameModeBase::LogPlayerInfo()
 {
     if (!GetWorld()) return;
 
     for (auto It = GetWorld()->GetControllerIterator(); It; ++It)
     {
         const auto Controller = It->Get();
-        if (!Controller) return;
+        if (!Controller) continue;
 
         const auto PlayerState = Cast<ASTUPlayerState>(Controller->PlayerState);
         if (!PlayerState) continue;
@@ -190,23 +187,23 @@ void ASTUGameModeBase::LogPlayerInfo()
 
 void ASTUGameModeBase::StartRespawn(AController* Controller)
 {
-    const auto RespawnAvaliable = RounsCountDown > MinRoundTimeForRespawn + GameData.RespawnTime;
-    if (!RespawnAvaliable) return;
+    const auto RespawnAvailable = RoundCountDown > MinRoundTimeForRespawn + GameData.RespawnTime;
+    if (!RespawnAvailable) return;
 
-    const auto RespawnComponent = STUUtils::GetSTUPlayerComponent<USTUPespawnComponent>(Controller);
+    const auto RespawnComponent = STUUtils::GetSTUPlayerComponent<USTURespawnComponent>(Controller);
     if (!RespawnComponent) return;
 
     RespawnComponent->Respawn(GameData.RespawnTime);
 }
 
-void ASTUGameModeBase::RespawnRequest(AController* Controller) 
+void ASTUGameModeBase::RespawnRequest(AController* Controller)
 {
     ResetOnePlayer(Controller);
 }
 
-void ASTUGameModeBase::GameOver() 
+void ASTUGameModeBase::GameOver()
 {
-    UE_LOG(LogSTUGameModeBase, Display, TEXT("======= GAME OVER ========"));
+    UE_LOG(LogSTUGameModeBase, Display, TEXT("======== GAME OVER ========"));
     LogPlayerInfo();
 
     for (auto Pawn : TActorRange<APawn>(GetWorld()))
@@ -221,33 +218,30 @@ void ASTUGameModeBase::GameOver()
     SetMatchState(ESTUMatchState::GameOver);
 }
 
-void ASTUGameModeBase::SetMatchState(ESTUMatchState NewState)
+void ASTUGameModeBase::SetMatchState(ESTUMatchState State)
 {
-    if (MatchState == NewState) return;
+    if (MatchState == State) return;
 
-    MatchState = NewState;
-    OnMatchStateChange.Broadcast(MatchState);
+    MatchState = State;
+    OnMatchStateChanged.Broadcast(MatchState);
 }
 
-bool ASTUGameModeBase::SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate) 
+bool ASTUGameModeBase::SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate)
 {
     const auto PauseSet = Super::SetPause(PC, CanUnpauseDelegate);
     if (PauseSet)
     {
         SetMatchState(ESTUMatchState::Pause);
     }
-
     return PauseSet;
 }
 
-bool ASTUGameModeBase::ClearPause() 
+bool ASTUGameModeBase::ClearPause()
 {
     const auto PauseCleared = Super::ClearPause();
-
     if (PauseCleared)
     {
         SetMatchState(ESTUMatchState::InProgress);
     }
-
     return PauseCleared;
 }

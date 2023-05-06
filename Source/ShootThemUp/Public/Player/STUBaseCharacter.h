@@ -18,7 +18,6 @@ public:
     ASTUBaseCharacter(const FObjectInitializer& ObjInit);
 
 protected:
-
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     USTUHealthComponent* HealthComponent;
 
@@ -37,12 +36,11 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Damage")
     FVector2D LandedDamage = FVector2D(10.0f, 100.0f);
 
-    UPROPERTY(EditDefaultsOnly, Category = "Material")
+    UPROPERTY(EditDefaultsOnly, Category = "Damage")
     FName MaterialColorName = "Paint Color";
-         
+
     virtual void BeginPlay() override;
     virtual void OnDeath();
-
     virtual void OnHealthChanged(float Health, float HealthDelta);
 
 public:
@@ -57,8 +55,6 @@ public:
     void SetPlayerColor(const FLinearColor& Color);
 
 private:
-    
-
     UFUNCTION()
     void OnGroundLanded(const FHitResult& Hit);
 };

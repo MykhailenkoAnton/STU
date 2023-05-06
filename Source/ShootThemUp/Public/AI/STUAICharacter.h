@@ -23,21 +23,17 @@ public:
     virtual void Tick(float DeltaTime) override;
 
 protected:
-
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     UWidgetComponent* HealthWidgetComponent;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
-    float HealthVisibleDistance = 1000.0f;
-    
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Health")
+    float HealthVisibilityDistance = 1000.0f;
+
     virtual void BeginPlay() override;
 
+    virtual void OnDeath() override;
     virtual void OnHealthChanged(float Health, float HealthDelta) override;
 
-    virtual void OnDeath() override;
-
 private:
-
     void UpdateHealthWidgetVisibility();
-
 };

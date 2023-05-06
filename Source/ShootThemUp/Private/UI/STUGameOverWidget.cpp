@@ -1,6 +1,5 @@
 // Shoot Them Up Game, All Rights Reserved.
 
-
 #include "UI/STUGameOverWidget.h"
 #include "STUGameModeBase.h"
 #include "Player/STUPlayerState.h"
@@ -19,25 +18,25 @@ void USTUGameOverWidget::NativeOnInitialized()
         const auto GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
         if (GameMode)
         {
-            GameMode->OnMatchStateChange.AddUObject(this, &USTUGameOverWidget::OnMatchStateChanged);
+            GameMode->OnMatchStateChanged.AddUObject(this, &USTUGameOverWidget::OnMatchStateChanged);
         }
     }
 
     if (ResetLevelButton)
     {
-        ResetLevelButton->OnClicked.AddDynamic(this, &USTUGameOverWidget::OnResestLevel);
+        ResetLevelButton->OnClicked.AddDynamic(this, &USTUGameOverWidget::OnResetLevel);
     }
 }
 
-void USTUGameOverWidget::OnMatchStateChanged(ESTUMatchState State) 
+void USTUGameOverWidget::OnMatchStateChanged(ESTUMatchState State)
 {
     if (State == ESTUMatchState::GameOver)
     {
-        UpdatePlayerStat();
+        UpdatePlayersStat();
     }
 }
 
-void USTUGameOverWidget::UpdatePlayerStat()
+void USTUGameOverWidget::UpdatePlayersStat()
 {
     if (!GetWorld() || !PlayerStatBox) return;
 
@@ -51,12 +50,12 @@ void USTUGameOverWidget::UpdatePlayerStat()
         const auto PlayerState = Cast<ASTUPlayerState>(Controller->PlayerState);
         if (!PlayerState) continue;
 
-        const auto PlayerStatRowWidget = CreateWidget<USTUPlayerStatRowWidget>(GetWorld(), PlayerStatsRowWidgetClass);
+        const auto PlayerStatRowWidget = CreateWidget<USTUPlayerStatRowWidget>(GetWorld(), PlayerStatRowWidgetClass);
         if (!PlayerStatRowWidget) continue;
 
         PlayerStatRowWidget->SetPlayerName(FText::FromString(PlayerState->GetPlayerName()));
         PlayerStatRowWidget->SetKills(STUUtils::TextFromInt(PlayerState->GetKillsNum()));
-        PlayerStatRowWidget->SetDeath(STUUtils::TextFromInt(PlayerState->GetDeathNum()));
+        PlayerStatRowWidget->SetDeaths(STUUtils::TextFromInt(PlayerState->GetDeathsNum()));
         PlayerStatRowWidget->SetTeam(STUUtils::TextFromInt(PlayerState->GetTeamID()));
         PlayerStatRowWidget->SetPlayerIndicatorVisibility(Controller->IsPlayerController());
         PlayerStatRowWidget->SetTeamColor(PlayerState->GetTeamColor());
@@ -65,9 +64,8 @@ void USTUGameOverWidget::UpdatePlayerStat()
     }
 }
 
-void USTUGameOverWidget::OnResestLevel() 
+void USTUGameOverWidget::OnResetLevel()
 {
-    //const FName CurrentLevelName = "TestLevel";
-    const FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this);
-    UGameplayStatics::OpenLevel(GetWorld(), FName(CurrentLevelName));
+    const auto CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this);
+    UGameplayStatics::OpenLevel(this, FName(CurrentLevelName));
 }

@@ -51,7 +51,6 @@ DECLARE_MULTICAST_DELEGATE(FOnDeathSignature);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChangedSignature, float, float);
 
 // VFX
-
 class UNiagaraSystem;
 
 USTRUCT(BlueprintType)
@@ -84,6 +83,7 @@ struct FImpactData
     FDecalData DecalData;
 };
 
+// game
 USTRUCT(BlueprintType)
 struct FGameData
 {
@@ -96,10 +96,10 @@ struct FGameData
     int32 RoundsNum = 4;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game", meta = (ClampMin = "3", ClampMax = "300"))
-    int32 RoundsTime = 10; // in seconds
+    int32 RoundTime = 10;  // in seconds
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-    FLinearColor DefaultsTeamColor = FLinearColor::Red;
+    FLinearColor DefaultTeamColor = FLinearColor::Red;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
     TArray<FLinearColor> TeamColors;
@@ -108,8 +108,8 @@ struct FGameData
     int32 RespawnTime = 5;  // in seconds
 };
 
-UENUM()
-enum class ESTUMatchState: uint8
+UENUM(BlueprintType)
+enum class ESTUMatchState : uint8
 {
     WaitingToStart = 0,
     InProgress,
@@ -117,7 +117,7 @@ enum class ESTUMatchState: uint8
     GameOver
 };
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnMatchStateChangeSignature, ESTUMatchState);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMatchStateChangedSignature, ESTUMatchState);
 
 USTRUCT(BlueprintType)
 struct FLevelData
@@ -128,11 +128,10 @@ struct FLevelData
     FName LevelName = NAME_None;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game")
-    FName LevelDispayName = NAME_None;
+    FName LevelDisplayName = NAME_None;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game")
     UTexture2D* LevelThumb;
-
 };
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnLevelSelectedSignature, const FLevelData &);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnLevelSelectedSignature, const FLevelData&);

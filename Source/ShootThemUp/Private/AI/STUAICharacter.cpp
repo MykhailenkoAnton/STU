@@ -28,27 +28,17 @@ ASTUAICharacter::ASTUAICharacter(const FObjectInitializer& ObjInit)
     HealthWidgetComponent->SetDrawAtDesiredSize(true);
 }
 
-void ASTUAICharacter::BeginPlay() 
+void ASTUAICharacter::BeginPlay()
 {
     Super::BeginPlay();
 
     check(HealthWidgetComponent);
 }
 
-void ASTUAICharacter::Tick(float DeltaTime) 
+void ASTUAICharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-
     UpdateHealthWidgetVisibility();
-}
-
-void ASTUAICharacter::OnHealthChanged(float Health, float HealthDelta)
-{
-    Super::OnHealthChanged(Health, HealthDelta);
-
-    const auto HealthBarWidget = Cast<USTUHealthBarWidget>(HealthWidgetComponent->GetUserWidgetObject());
-    if (!HealthBarWidget) return;
-    HealthBarWidget->SetHealthPercent(HealthComponent->GetHealthPercent());
 }
 
 void ASTUAICharacter::OnDeath()
@@ -62,12 +52,23 @@ void ASTUAICharacter::OnDeath()
     }
 }
 
-void ASTUAICharacter::UpdateHealthWidgetVisibility() 
+void ASTUAICharacter::OnHealthChanged(float Health, float HealthDelta)
 {
-    if (!GetWorld() || !GetWorld()->GetFirstPlayerController() || !GetWorld()->GetFirstPlayerController()->GetPawnOrSpectator()) return;
+    Super::OnHealthChanged(Health, HealthDelta);
+
+    const auto HealthBarWidget = Cast<USTUHealthBarWidget>(HealthWidgetComponent->GetUserWidgetObject());
+    if (!HealthBarWidget) return;
+    HealthBarWidget->SetHealthPercent(HealthComponent->GetHealthPercent());
+}
+
+void ASTUAICharacter::UpdateHealthWidgetVisibility()
+{
+    if (!GetWorld() ||                              //
+        !GetWorld()->GetFirstPlayerController() ||  //
+        !GetWorld()->GetFirstPlayerController()->GetPawnOrSpectator())
+        return;
 
     const auto PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawnOrSpectator()->GetActorLocation();
     const auto Distance = FVector::Distance(PlayerLocation, GetActorLocation());
-
-    HealthWidgetComponent->SetVisibility(Distance < HealthVisibleDistance, true);
+    HealthWidgetComponent->SetVisibility(Distance < HealthVisibilityDistance, true);
 }

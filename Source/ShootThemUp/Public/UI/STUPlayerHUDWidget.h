@@ -39,18 +39,12 @@ public:
     UFUNCTION(BlueprintCallable, Category = "UI")
     FString FormatBullets(int32 BulletsNum) const;
 
-    virtual bool Initialize() override;
-
 protected:
-
     UPROPERTY(meta = (BindWidget))
     UProgressBar* HealthProgressBar;
 
-    UPROPERTY(meta = (BindWidgetAmim), Transient)
-    UWidgetAnimation* DamageAnimaton;
-
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
-    float PercentColorThreshold = 0.3;
+    float PercentColorThreshold = 0.3f;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
     FLinearColor GoodColor = FLinearColor::White;
@@ -58,10 +52,10 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
     FLinearColor BadColor = FLinearColor::Red;
 
+    virtual void NativeOnInitialized() override;
+
 private:
     void OnHealthChanged(float Health, float HealthDelta);
-
     void OnNewPawn(APawn* NewPawn);
-
     void UpdateHealthBar();
 };

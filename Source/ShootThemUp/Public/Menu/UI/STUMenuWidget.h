@@ -10,41 +10,39 @@
 class UButton;
 class UHorizontalBox;
 class USTUGameInstance;
-class USTULeveltemWidget;
+class USTULevelItemWidget;
 
 UCLASS()
 class SHOOTTHEMUP_API USTUMenuWidget : public UUserWidget
 {
-	GENERATED_BODY()
-	
-protected:
+    GENERATED_BODY()
 
-	UPROPERTY(meta = (BindWidget))
+protected:
+    UPROPERTY(meta = (BindWidget))
     UButton* StartGameButton;
 
-	UPROPERTY(meta = (BindWidget))
+    UPROPERTY(meta = (BindWidget))
     UButton* QuitGameButton;
 
-	UPROPERTY(meta = (BindWidget))
-    UHorizontalBox* LevelItemBox;
+    UPROPERTY(meta = (BindWidget))
+    UHorizontalBox* LevelItemsBox;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
     TSubclassOf<UUserWidget> LevelItemWidgetClass;
 
-	virtual void NativeOnInitialized() override;
+    virtual void NativeOnInitialized() override;
 
 private:
+    UPROPERTY()
+    TArray<USTULevelItemWidget*> LevelItemWidgets;
 
-	UPROPERTY()
-    TArray<USTULeveltemWidget*> LevelItemWidgets;
-
-	UFUNCTION()
+    UFUNCTION()
     void OnStartGame();
 
-	UFUNCTION()
+    UFUNCTION()
     void OnQuitGame();
 
-	void InitLevelItems();
-    void OnLevelSelected(const FLevelData & Data);
+    void InitLevelItems();
+    void OnLevelSelected(const FLevelData& Data);
     USTUGameInstance* GetSTUGameInstance() const;
 };
