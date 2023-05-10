@@ -127,3 +127,17 @@ AController* ASTURifleWeapon::GetController() const
     const auto Pawn = Cast<APawn>(GetOwner());
     return Pawn ? Pawn->GetController() : nullptr;
 }
+
+void ASTURifleWeapon::Zoom(bool Enabled)
+{
+    const auto Conttoller = Cast<APlayerController>(GetController());
+
+    if (!Conttoller || !Conttoller->PlayerCameraManager) return;
+
+    if (Enabled)
+    {
+        DefaultCameraFOV = Conttoller->PlayerCameraManager->GetFOVAngle();
+    }
+
+    Conttoller->PlayerCameraManager->SetFOV(Enabled ? FOVZoomAngle: DefaultCameraFOV);
+}
